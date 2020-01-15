@@ -24,6 +24,19 @@
   color: white;
 }
 
+.title{
+  font-weight: bold;
+}
+
+.table_head{
+  background-color:#665118;
+  color: white;
+}
+.actionable-icons{
+  vertical-align:middle;
+  font-size: 2em;
+}
+
 .App-link {
   color: #61dafb;
 }
