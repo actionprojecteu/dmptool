@@ -21,8 +21,8 @@ class DmpTable extends React.Component {
       <table class="table">
         <thead class="table_head">
           <tr>
-            <th style={{width:"70%"}}>Name</th>
-            <th style={{"text-align":"center"}}>Price</th>
+            <th style={{width:"70%", fontSize:"2em"}}>Name</th>
+            <th style={{"text-align":"center", fontSize:"2em"}}>Price</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

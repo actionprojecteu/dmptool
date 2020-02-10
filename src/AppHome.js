@@ -8,7 +8,7 @@ function AppHome() {
         <div>
           <div  className="col-md-3"></div>
           <div  className="col-md-6">
-            <center><h3> Sample DMP </h3></center>
+            <center><h3> List of Data Management Plan </h3></center>
             <FilterableDmpTable />
           </div>
           <div  className="col-md-3"></div>

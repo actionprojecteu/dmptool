@@ -12,7 +12,8 @@ class DmpRow extends React.Component {
 
     this.state = {
       hover: false,
-      showForm: false
+      showForm: false,
+      dmp: props.dmp
     }
 
     this.handleClick = this.handleClick.bind(this);
@@ -29,7 +30,24 @@ class DmpRow extends React.Component {
   handleEdit(e){
     e.preventDefault();
     console.log("Edit DMP");
-    this.setState({showForm:true})
+    //this.setState({showForm:true})
+    //this.setState({showForm:true, dmp:{description:'ttt'}})
+    const token = localStorage.getItem("token");
+
+    fetch('https://api.dmptool.actionproject.eu/dmps/'+this.state.dmp._id,{
+				method: "GET",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+          'Authorization': 'Bearer '+token
+				},
+			}).then(response => {
+				response.json().then(data =>{
+					console.log("Load Data Edit" + JSON.stringify(data));
+					//this.setState({dmps:JSON.parse(JSON.stringify(data))})
+					this.setState({showForm:true, dmp:data})
+				})
+		})
   }
 
   handleClose(e){
@@ -77,7 +95,7 @@ class DmpRow extends React.Component {
 
     return(
       <tr>
-        <td><span class="title">{this.props.dmp.name}</span><br/>{description}</td>
+        <td><span class="title" style={{fontSize:"1.5em"}}>{this.props.dmp.name}</span><br/>{description}</td>
         <td align="center" class="actionable-icons">
         <div>
           <span className="fa-layers fa-fw">
@@ -93,7 +111,7 @@ class DmpRow extends React.Component {
               <Modal.Header closeButton>
                 <Modal.Title>{name}</Modal.Title>
               </Modal.Header>
-              <Modal.Body scrollable="true"><DmpFormContainer dmp={this.props.dmp} action="edit" /></Modal.Body>
+              <Modal.Body scrollable="true"><DmpFormContainer dmp={this.state.dmp} action="edit" /></Modal.Body>
             </Modal>
         </div>
         </td>

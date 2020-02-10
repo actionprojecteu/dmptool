@@ -12,13 +12,17 @@ class FilterableDmpTable extends React.Component {
 	}
 
 	componentDidMount() {
-		fetch('http://localhost:5000/dmps',{
+		const token = localStorage.getItem("token");
+
+		fetch('https://api.dmptool.actionproject.eu/dmps',{
 				method: "GET",
 				headers: {
 					'Accept': 'application/json',
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer '+token
 				},
 			}).then(response => {
+				console.log(response);
 				response.json().then(data =>{
 					console.log("Load Data" + JSON.stringify(data));
 					//this.setState({dmps:JSON.parse(JSON.stringify(data))})

@@ -18,64 +18,13 @@ class DmpFormContainer extends Component {
   constructor(props) {
     super(props);
 
-/*
-    this.state = {
-      newDMP: props.dmp,
-      genderOptions: ['Male', 'Female', 'Others'],
-      skillOptions: ['Programming', 'Development', 'Design', 'Testing'],
-      yesandnoOptions: ['Yes','No'],
-      licenseOptions: ['CC BY','CC BY-SA','CC0','CC BY-NC','CC BY-NC-SA','CC-BY-ND','CC BY-NC-ND','Others'],
-      showReuse: false
-
-    }
-*/
-
-/*
-    this.state = {
-      newDMP: {
-        purpose: '',
-        description: '',
-        reuse: '',
-        reuse_url: '',
-        contribution_size: '',
-        number_contributions: '',
-        interest: '',
-        community: '',
-        sharing: '',
-        keywords: '',
-        tags: [],
-        embargo: '',
-        embargo_date: '',
-        reason: '',
-        license: '',
-        conditions: '',
-        vocabulary: '',
-        vocabulary_text:'',
-        data_used: '',
-        list_projects: '',
-        quality: '',
-        quality_text: '',
-        personal: '',
-        personal_text: '',
-        protected_geolocation: '',
-        protected_geolocation_text: ''
-      },
-
-      genderOptions: ['Male', 'Female', 'Others'],
-      skillOptions: ['Programming', 'Development', 'Design', 'Testing'],
-      yesandnoOptions: ['Yes','No'],
-      licenseOptions: ['CC BY','CC BY-SA','CC0','CC BY-NC','CC BY-NC-SA','CC-BY-ND','CC BY-NC-ND','Others'],
-      showReuse: false
-
-    }
-    */
-
     console.log("Props:"+props.dmp.description);
 
     if (props.action == 'edit'){
       console.log("Edit action2:" +props.action+" "+props.dmp.reuse);
 
       const reuse_checkbox = (props.dmp.reuse == undefined) ? '' : props.dmp.reuse;
+      const use_data_checkbox = (props.dmp.use_data == undefined) ? '' : props.dmp.use_data;
       const interest_checkbox = (props.dmp.interest == undefined) ? '' : props.dmp.interest;
       const sharing_checkbox = (props.dmp.sharing == undefined) ? '' : props.dmp.sharing;
       const embargo_checkbox = (props.dmp.embargo == undefined) ? '' : props.dmp.embargo;
@@ -87,12 +36,16 @@ class DmpFormContainer extends Component {
       const geolocation_checkbox = (props.dmp.protected_geolocation == undefined) ? '' : props.dmp.protected_geolocation;
 
 
+
       this.state = {
         newDMP: {
+          user: props.dmp.user,
           purpose: props.dmp.purpose,
           description: props.dmp.description,
           reuse: reuse_checkbox,
           reuse_url: props.dmp.reuse_url,
+          use_data: use_data_checkbox,
+          use_data_url: props.dmp.use_data_url,
           contribution_size: props.dmp.contribution_size,
           number_contributions: props.dmp.number_contributions,
           interest: interest_checkbox,
@@ -127,10 +80,13 @@ class DmpFormContainer extends Component {
     } else {
       this.state = {
         newDMP: {
+          user: '',
           purpose: '',
           description: '',
           reuse: '',
           reuse_url: '',
+          use_data: '',
+          use_data_url: '',
           contribution_size: '',
           number_contributions: '',
           interest: '',
@@ -299,14 +255,17 @@ class DmpFormContainer extends Component {
     e.preventDefault();
     let userData = this.state.newDMP;
 
+    const token = localStorage.getItem("token");
 
     if (this.props.action == 'edit'){
-      fetch('http://localhost:5000/dmps/'+this.props.dmp.name,{
+      console.log(this.props.dmp._id);
+      fetch('https://api.dmptool.actionproject.eu/dmps/'+this.props.dmp._id,{
           method: "PUT",
           body: JSON.stringify(userData),
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+token
           },
         }).then(response => {
           response.json().then(data =>{
@@ -314,20 +273,21 @@ class DmpFormContainer extends Component {
           })
       })
     }else{
-      fetch('http://localhost:5000/dmps',{
+      fetch('https://api.dmptool.actionproject.eu/dmps',{
           method: "POST",
           body: JSON.stringify(userData),
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+token
           },
         }).then(response => {
           response.json().then(data =>{
             console.log("Successful" + data);
+
           })
       })
     }
-
 
   }
 
@@ -385,6 +345,150 @@ class DmpFormContainer extends Component {
               handleChange={this.handleUrl}
               style={(this.state.newDMP.reuse === 'Yes')? {} : { display: 'none' }}
           />
+
+          <CheckBox title={'At this moment, is your project collecting data?'}
+                name={'use_data'}
+                options={this.state.yesandnoOptions}
+                selectedOptions = { this.state.newDMP.use_data }
+                handleChange={this.handleCheckBox}
+          />
+
+          <Input inputType={'url'}
+              name={'use_data_url'}
+              title= {'Could you specify the link of the data?'}
+              value={this.state.newDMP.use_data_url}
+              placeholder = {'Enter the url where the system can find the data used'}
+              handleChange={this.handleUrl}
+              style={(this.state.newDMP.use_data === 'Yes')? {} : { display: 'none' }}
+          />
+
+          <CheckBox title={'Do you want that ACTION publish and share your data on behalf you?'}
+                name={'sharing'}
+                options={this.state.yesandnoOptions}
+                selectedOptions = { this.state.newDMP.sharing}
+                handleChange={this.handleCheckBox}
+                style={(this.state.newDMP.use_data === 'No')? {} : { display: 'none' }}
+            />
+
+            <Input inputType={'text'}
+                title={'Could you provide us some keywords that describe your data?'}
+                rows={5}
+                name={'keywords'}
+                value={this.state.newDMP.keywords}
+                handleChange={this.handleTextArea}
+                placeholder={'Describe the community that can be interested in using your data'}
+                style={(this.state.newDMP.sharing === 'Yes')? {} : { display: 'none' }}
+            />
+
+            <CheckBox title={'If not, do you think in future you will change your mind?'}
+                  name={'embargo'}
+                  options={this.state.yesandnoOptions}
+                  selectedOptions = { this.state.newDMP.embargo}
+                  handleChange={this.handleCheckBox}
+                  style={(this.state.newDMP.sharing === 'No')? {} : { display: 'none' }}
+              />
+
+            <Input inputType={'date'}
+                  title={'Could you establish a date to release the data, please?'}
+                  rows={5}
+                  name={'embargo_date'}
+                  value={this.state.newDMP.embargo_date}
+                  handleChange={this.handleTextArea}
+                  style={(this.state.newDMP.embargo === 'Yes')? {} : { display: 'none' }}
+              />
+
+              <TextArea
+                  title={'Please, explain the reason'}
+                  rows={3}
+                  name={'reason'}
+                  value={this.state.newDMP.reason}
+                  handleChange={this.handleTextArea}
+                  placeholder={'Please, specify the reason for not sharing your data'}
+                  style={(this.state.newDMP.embargo === 'No')? {} : { display: 'none' }}
+              />
+
+              <Select title={'Please, specify the license of your data'}
+                  name={'license'}
+                  options = {this.state.licenseOptions}
+                  value = {this.state.newDMP.license}
+                  placeholder = {'Select your license'}
+                  handleChange = {this.handleInput}
+                />
+
+              <TextArea
+                  title={'Please, write the terms and conditions to use your data'}
+                  rows={3}
+                  name={'conditions'}
+                  value={this.state.newDMP.conditions}
+                  handleChange={this.handleTextArea}
+                  placeholder={'Please, specify the terms and conditions to use your data '}
+                  style={(this.state.newDMP.license === 'Others')? {} : { display: 'none' }}
+              />
+
+              <CheckBox title={'Does your data follow an specific vocabulary or standard to describe it?'}
+                  name={'vocabulary'}
+                  options={this.state.yesandnoOptions}
+                  selectedOptions = { this.state.newDMP.vocabulary}
+                  handleChange={this.handleCheckBox}
+              />
+
+              <TextArea
+                  title={'Provide the vocabularies, standards or methodologies'}
+                  rows={3}
+                  name={'vocabulary_text'}
+                  value={this.state.newDMP.vocabulary_text}
+                  handleChange={this.handleTextArea}
+                  placeholder={'Please, provide the vocabulary, standards or methodologies used'}
+                  style={(this.state.newDMP.vocabulary === 'Yes')? {} : { display: 'none' }}
+              />
+              <CheckBox title={'Are you using any methodology or process to assure the quality of the data?'}
+                  name={'quality'}
+                  options={this.state.yesandnoOptions}
+                  selectedOptions = { this.state.newDMP.quality}
+                  handleChange={this.handleCheckBox}
+              />
+              <TextArea
+                  title={'Please, describe it'}
+                  rows={3}
+                  name={'quality_text'}
+                  value={this.state.newDMP.quality_text}
+                  handleChange={this.handleTextArea}
+                  placeholder={'Describe it'}
+                  style={(this.state.newDMP.quality=== 'Yes')? {} : { display: 'none' }}
+              />
+
+              <CheckBox title={'Are you using personal information in your data (name, emails, telephone, etc ...) ?'}
+                  name={'personal'}
+                  options={this.state.yesandnoOptions}
+                  selectedOptions = { this.state.newDMP.personal}
+                  handleChange={this.handleCheckBox}
+              />
+              <TextArea
+                  title={'Named if you apply an anonymization process to the data'}
+                  rows={3}
+                  name={'personal_text'}
+                  value={this.state.newDMP.personal_text}
+                  handleChange={this.handleTextArea}
+                  placeholder={'Describe the anonymization process'}
+                  style={(this.state.newDMP.personal=== 'Yes')? {} : { display: 'none' }}
+              />
+
+              <CheckBox title={'Are you using sensitive data for protected species (as geolocation) '}
+                  name={'protected_geolocation'}
+                  options={this.state.yesandnoOptions}
+                  selectedOptions = { this.state.newDMP.protected_geolocation}
+                  handleChange={this.handleCheckBox}
+              />
+              <TextArea
+                  title={'Describe the process to avoid this possibility'}
+                  rows={3}
+                  name={'protected_geolocation_text'}
+                  value={this.state.newDMP.protected_geolocation_text}
+                  handleChange={this.handleTextArea}
+                  placeholder={'Describe it'}
+                  style={(this.state.newDMP.protected_geolocation=== 'Yes')? {} : { display: 'none' }}
+              />
+
         <Input inputType={'number'}
               name={'contribution_size'}
               title= {'What is the estimated size of each citizen contribution (in MB)?'}
@@ -418,153 +522,6 @@ class DmpFormContainer extends Component {
           placeholder={'Describe the community that can be interested in using your data'}
           style={(this.state.newDMP.interest === 'Yes')? {} : { display: 'none' }}
       />
-
-      <CheckBox title={'Are you interested in sharing and publishing your data?'}
-            name={'sharing'}
-            options={this.state.yesandnoOptions}
-            selectedOptions = { this.state.newDMP.sharing}
-            handleChange={this.handleCheckBox}
-        />
-
-        <Input inputType={'text'}
-            title={'Could you provide us some keywords that describe your data?'}
-            rows={5}
-            name={'keywords'}
-            value={this.state.newDMP.keywords}
-            handleChange={this.handleTextArea}
-            placeholder={'Describe the community that can be interested in using your data'}
-            style={(this.state.newDMP.sharing === 'Yes')? {} : { display: 'none' }}
-        />
-
-
-        <CheckBox title={'If not, do you want to establish an embargo period?'}
-              name={'embargo'}
-              options={this.state.yesandnoOptions}
-              selectedOptions = { this.state.newDMP.embargo}
-              handleChange={this.handleCheckBox}
-              style={(this.state.newDMP.sharing === 'No')? {} : { display: 'none' }}
-          />
-
-        <Input inputType={'date'}
-              title={'Select the date'}
-              rows={5}
-              name={'embargo_date'}
-              value={this.state.newDMP.embargo_date}
-              handleChange={this.handleTextArea}
-              style={(this.state.newDMP.embargo === 'Yes')? {} : { display: 'none' }}
-          />
-
-        <TextArea
-            title={'Please, explain the reason'}
-            rows={3}
-            name={'reason'}
-            value={this.state.newDMP.reason}
-            handleChange={this.handleTextArea}
-            placeholder={'Please, specify the reason for not sharing your data'}
-            style={(this.state.newDMP.embargo === 'No')? {} : { display: 'none' }}
-        />
-
-        <Select title={'Please, specify the license of your data'}
-                  name={'license'}
-                  options = {this.state.licenseOptions}
-                  value = {this.state.newDMP.license}
-                  placeholder = {'Select your license'}
-                  handleChange = {this.handleInput}
-                  />
-
-
-          <TextArea
-                  title={'Please, write the terms and conditions to use your data'}
-                  rows={3}
-                  name={'conditions'}
-                  value={this.state.newDMP.conditions}
-                  handleChange={this.handleTextArea}
-                  placeholder={'Please, specify the terms and conditions to use your data '}
-                  style={(this.state.newDMP.license === 'Others')? {} : { display: 'none' }}
-          />
-
-
-
-      <CheckBox title={'Does your data follow an specific vocabulary or standard to describe it?'}
-            name={'vocabulary'}
-            options={this.state.yesandnoOptions}
-            selectedOptions = { this.state.newDMP.vocabulary}
-            handleChange={this.handleCheckBox}
-        />
-
-      <TextArea
-              title={'Provide the vocabularies, standards or methodologies'}
-              rows={3}
-              name={'vocabulary_text'}
-              value={this.state.newDMP.vocabulary_text}
-              handleChange={this.handleTextArea}
-              placeholder={'Please, provide the vocabulary, standards or methodologies used'}
-              style={(this.state.newDMP.vocabulary === 'Yes')? {} : { display: 'none' }}
-      />
-
-      <CheckBox title={'Are your data used by other projects?'}
-            name={'data_used'}
-            options={this.state.yesandnoOptions}
-            selectedOptions = { this.state.newDMP.data_used}
-            handleChange={this.handleCheckBox}
-        />
-        <TextArea
-                title={'Named and describe it'}
-                rows={3}
-                name={'list_projects'}
-                value={this.state.newDMP.list_projects}
-                handleChange={this.handleTextArea}
-                placeholder={'Named and describe it'}
-                style={(this.state.newDMP.data_used === 'Yes')? {} : { display: 'none' }}
-        />
-
-        <CheckBox title={'Are you using any methodology or process to assure the quality of the data?'}
-              name={'quality'}
-              options={this.state.yesandnoOptions}
-              selectedOptions = { this.state.newDMP.quality}
-              handleChange={this.handleCheckBox}
-          />
-          <TextArea
-                  title={'Describe it'}
-                  rows={3}
-                  name={'quality_text'}
-                  value={this.state.newDMP.quality_text}
-                  handleChange={this.handleTextArea}
-                  placeholder={'Describe it'}
-                  style={(this.state.newDMP.quality=== 'Yes')? {} : { display: 'none' }}
-          />
-
-          <CheckBox title={'Are you using personal data?'}
-                name={'personal'}
-                options={this.state.yesandnoOptions}
-                selectedOptions = { this.state.newDMP.personal}
-                handleChange={this.handleCheckBox}
-          />
-          <TextArea
-                    title={'Named if you apply an anonymization process to the data'}
-                    rows={3}
-                    name={'personal_text'}
-                    value={this.state.newDMP.personal_text}
-                    handleChange={this.handleTextArea}
-                    placeholder={'Describe the anonymization process'}
-                    style={(this.state.newDMP.personal=== 'Yes')? {} : { display: 'none' }}
-          />
-
-          <CheckBox title={'Are you using sensitive data for protected species (as geolocation) '}
-                name={'protected_geolocation'}
-                options={this.state.yesandnoOptions}
-                selectedOptions = { this.state.newDMP.protected_geolocation}
-                handleChange={this.handleCheckBox}
-          />
-          <TextArea
-                    title={'Describe the process to avoid this possibility'}
-                    rows={3}
-                    name={'protected_geolocation_text'}
-                    value={this.state.newDMP.protected_geolocation_text}
-                    handleChange={this.handleTextArea}
-                    placeholder={'Describe it'}
-                    style={(this.state.newDMP.protected_geolocation=== 'Yes')? {} : { display: 'none' }}
-          />
 
           <Button
               action = {this.handleFormSubmit}
