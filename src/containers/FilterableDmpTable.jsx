@@ -1,14 +1,28 @@
 import React from 'react';
 import DmpTable from '../containers/DmpTable'
 import Example from '../components/Example';
+import Button from '../components/Button';
+import DmpFormContainer from './/DmpFormContainer';
+import Modal from "react-bootstrap/Modal";
 
 class FilterableDmpTable extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
 			dmps: [],
-			show: true
+			show: true,
+			showForm: false
 		}
+		this.handleAddDmp = this.handleAddDmp.bind(this);
+		this.handleClose = this.handleClose.bind(this);
+	}
+
+	handleClose(){
+		this.setState({showForm:false});
+	}
+
+	handleAddDmp(){
+		this.setState({showForm:true});
 	}
 
 	componentDidMount() {
@@ -35,10 +49,25 @@ class FilterableDmpTable extends React.Component {
 		return (
 			<div>
 				<DmpTable dmps={this.state.dmps} />
+				<Button
+							action = {this.handleAddDmp}
+							type = {'primary'}
+							title = {'New'}
+						style={buttonStyle}
+					/> { /* Add */ }
+					<Modal show={this.state.showForm} onHide={this.handleClose} animation={false}>
+						<Modal.Header closeButton>
+							<Modal.Title>New DMP</Modal.Title>
+						</Modal.Header>
+						<Modal.Body scrollable="true"><DmpFormContainer action="new" /></Modal.Body>
+					</Modal>
 			</div>
 		);
 	}
 }
 
+const buttonStyle = {
+  margin : '10px 10px 10px 10px'
+}
 
 export default FilterableDmpTable;
