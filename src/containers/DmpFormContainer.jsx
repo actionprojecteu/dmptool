@@ -18,7 +18,7 @@ class DmpFormContainer extends Component {
   constructor(props) {
     super(props);
 
-    console.log("Props:"+props.dmp.description);
+    //console.log("Props:"+props.dmp.description);
 
     if (props.action == 'edit'){
       console.log("Edit action2:" +props.action+" "+props.dmp.reuse);
@@ -40,6 +40,9 @@ class DmpFormContainer extends Component {
       this.state = {
         newDMP: {
           user: props.dmp.user,
+          name: props.dmp.name,
+          project: props.dmp.project,
+          project_description: props.dmp.project_description,
           purpose: props.dmp.purpose,
           description: props.dmp.description,
           reuse: reuse_checkbox,
@@ -80,9 +83,12 @@ class DmpFormContainer extends Component {
     } else {
       this.state = {
         newDMP: {
-          user: '',
+          user: localStorage.getItem("username"),
+          name: '',
           purpose: '',
           description: '',
+          project:localStorage.getItem("project"),
+          project_description: localStorage.getItem("project_description"),
           reuse: '',
           reuse_url: '',
           use_data: '',
@@ -270,6 +276,7 @@ class DmpFormContainer extends Component {
         }).then(response => {
           response.json().then(data =>{
             console.log("Update Successful" + data);
+            this.createTask(data.id);
           })
       })
     }else{
@@ -284,11 +291,30 @@ class DmpFormContainer extends Component {
         }).then(response => {
           response.json().then(data =>{
             console.log("Successful" + data);
-
+            this.createTask(data.id);
           })
       })
     }
 
+  }
+
+  createTask(dmp_id){
+    const data = {"dmp":dmp_id};
+    const token = localStorage.getItem("token");
+
+    fetch('https://api.dmptool.actionproject.eu/tasks',{
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer '+token
+        },
+      }).then(response => {
+        response.json().then(data =>{
+          console.log("Successful" + data);
+        })
+    })
   }
 
   handleClearForm(e) {
@@ -310,6 +336,14 @@ class DmpFormContainer extends Component {
 
 
         <form className="container-fluid" onSubmit={this.handleFormSubmit}>
+
+          <Input inputType={'text'}
+                name={'name'}
+                title= {'Write the name of your DMP'}
+                value={this.state.newDMP.name}
+                placeholder = {''}
+                handleChange={this.handleTextArea}
+            />
 
           <TextArea
               title={'What is the purpose of the data collected / generated?'}
