@@ -9,6 +9,7 @@ import Header from "./header";
 import Footer from "./footer";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { PrivateRoute } from './components/PrivateRoute';
 
 
 const routing = (
@@ -18,9 +19,8 @@ const routing = (
       <hr />
       <Switch>
         <Route exact path="/login" component={LoginBox} />
-        <Route exact path="/" component={AppHome} />
+        <PrivateRoute exact path="/" component={AppHome} />
       </Switch>
-      <Footer />
     </div>
   </Router>
 );
