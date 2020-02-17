@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf, faFileWord, faPencilAlt, faTools, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import DmpFormContainer from '../containers/DmpFormContainer';
 import Modal from "react-bootstrap/Modal";
+import Button from './Button';
 
 class DmpRow extends React.Component {
 
@@ -18,6 +19,7 @@ class DmpRow extends React.Component {
       showButtons: false,
       docx_file: '',
       pdf_file: '',
+      showDeleteDialog: false,
       dmp: props.dmp
     }
 
@@ -29,6 +31,10 @@ class DmpRow extends React.Component {
 
     this.toggleHover = this.toggleHover.bind(this);
     this.handleClose = this.handleClose.bind(this);
+
+    this.handleCloseDelete = this.handleCloseDelete.bind(this);
+    this.handleDeleteYes = this.handleDeleteYes.bind(this);
+    this.handleDeleteNo = this.handleDeleteNo.bind(this);
 
     //this.timer = setInterval(()=> this.getLastTask(this.state.dmp['_id']), 1000);
     this.timer = setTimeout(()=> this.getLastTask(this.state.dmp['_id']), 1000);
@@ -89,7 +95,42 @@ class DmpRow extends React.Component {
   }
 
   handleClose(e){
-    this.setState({showForm:false})
+    this.setState({showForm:false});
+  }
+
+  handleCloseDelete(e){
+    e.preventDefault();
+
+    this.setState({showDeleteDialog:true});
+  }
+
+  handleDeleteYes(e){
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+
+    fetch('https://api.dmptool.actionproject.eu/dmps/'+this.state.dmp._id,{
+				method: "DELETE",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+          'Authorization': 'Bearer '+token
+				},
+			}).then(response => {
+				response.json().then(data =>{
+					console.log("DMP deleted" + JSON.stringify(data));
+          this.setState({showDeleteDialog:false});
+          window.location.reload(true);
+				})
+		})
+
+
+  }
+
+  handleDeleteNo(e){
+    e.preventDefault();
+
+    this.setState({showDeleteDialog:false});
   }
 
   getTask(id,timer){
@@ -148,7 +189,11 @@ class DmpRow extends React.Component {
 
   handleDelete(e){
     e.preventDefault();
-    console.log("Edit DMP");
+    console.log("Delete DMP");
+
+    this.setState({showDeleteDialog:true});
+
+    /*
     const token = localStorage.getItem("token");
 
     fetch('https://api.dmptool.actionproject.eu/dmps/'+this.state.dmp._id,{
@@ -163,6 +208,7 @@ class DmpRow extends React.Component {
 					console.log("DMP deleted" + JSON.stringify(data));
 				})
 		})
+    */
   }
 
   handleClick(e){
@@ -227,10 +273,33 @@ class DmpRow extends React.Component {
               <Modal.Body scrollable="true"><DmpFormContainer dmp={this.state.dmp} action="edit" /></Modal.Body>
             </Modal>
         </div>
+        <div>
+          <Modal show={this.state.showDeleteDialog} onHide={this.handleCloseDelete} animation={false}>
+						<Modal.Body>
+              <span>Are you sure to delete this Data Management Plan? </span>
+                <Button
+                  action = {this.handleDeleteYes}
+                  type = {'primary'}
+                  title = {'Yes'}
+                  style={buttonStyle}
+                />
+                <Button
+                  action = {this.handleDeleteNo}
+                  type = {'primary'}
+                  title = {'No'}
+                  style={buttonStyle}
+                />
+            </Modal.Body>
+					</Modal>
+        </div>
         </td>
       </tr>
     )
   }
+}
+
+const buttonStyle = {
+  margin : '10px 10px 10px 10px'
 }
 
 export default DmpRow;
