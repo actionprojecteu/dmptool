@@ -76,7 +76,9 @@ class DmpFormContainer extends Component {
         skillOptions: ['Programming', 'Development', 'Design', 'Testing'],
         yesandnoOptions: ['Yes','No'],
         licenseOptions: ['CC BY','CC BY-SA','CC0','CC BY-NC','CC BY-NC-SA','CC-BY-ND','CC BY-NC-ND','Others'],
-        showReuse: false
+        showReuse: false,
+        loading: false,
+        submitted: false
 
       }
 
@@ -121,7 +123,9 @@ class DmpFormContainer extends Component {
         skillOptions: ['Programming', 'Development', 'Design', 'Testing'],
         yesandnoOptions: ['Yes','No'],
         licenseOptions: ['CC BY','CC BY-SA','CC0','CC BY-NC','CC BY-NC-SA','CC-BY-ND','CC BY-NC-ND','Others'],
-        showReuse: false
+        showReuse: false,
+        loading: false,
+        submitted: false
 
       }
     }
@@ -140,6 +144,14 @@ class DmpFormContainer extends Component {
    this.handleAddition = this.handleAddition.bind(this);
    this.handleDrag = this.handleDrag.bind(this);
    this.handleTagClick = this.handleTagClick.bind(this);
+
+   this.handleClose = this.handleClose.bind(this)
+  }
+
+  handleClose(e){
+    e.preventDefault();
+
+    window.location.reload(true);
   }
 
   handleDelete(i) {
@@ -263,6 +275,8 @@ class DmpFormContainer extends Component {
 
     const token = localStorage.getItem("token");
 
+    this.setState({ loading: true });
+
     if (this.props.action == 'edit'){
       console.log(this.props.dmp._id);
       fetch('https://api.dmptool.actionproject.eu/dmps/'+this.props.dmp._id,{
@@ -276,7 +290,11 @@ class DmpFormContainer extends Component {
         }).then(response => {
           response.json().then(data =>{
             console.log("Update Successful" + data);
+            this.setState({submitted:true});
+            this.setState({loading:false});
             this.createTask(data.id);
+            //const { from } = this.props.location.state || { from: { pathname: "/" } };
+            //this.props.history.push({ from: { pathname: "/" }});
           })
       })
     }else{
@@ -291,6 +309,8 @@ class DmpFormContainer extends Component {
         }).then(response => {
           response.json().then(data =>{
             console.log("Successful" + data);
+            this.setState({submitted:true});
+            this.setState({loading:false});
             this.createTask(data.id);
           })
       })
@@ -557,19 +577,39 @@ class DmpFormContainer extends Component {
           style={(this.state.newDMP.interest === 'Yes')? {} : { display: 'none' }}
       />
 
+      {this.state.loading &&
+          <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+      }
+
+      {!this.state.submitted &&
           <Button
               action = {this.handleFormSubmit}
               type = {'primary'}
               title = {'Submit'}
             style={buttonStyle}
-          /> { /*Submit */ }
+          />
+      }
 
+        {!this.state.submitted &&
           <Button
             action = {this.handleClearForm}
-            type = {'secondary'}
+            type = {'primary'}
             title = {'Clear'}
             style={buttonStyle}
-          /> {/* Clear the form */}
+          />
+        }
+
+        {this.state.submitted &&
+          <div className="help-block">DMP successfully created</div>
+        }
+        {this.state.submitted &&
+          <Button
+            action = {this.handleClose}
+            type = {'secondary'}
+            title = {'Close'}
+            style={buttonStyle}
+          />
+        }
 
         </form>
 
