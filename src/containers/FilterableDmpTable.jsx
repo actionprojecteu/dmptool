@@ -53,7 +53,7 @@ class FilterableDmpTable extends React.Component {
 							action = {this.handleAddDmp}
 							type = {'primary'}
 							title = {'New'}
-						style={buttonStyle}
+							style={buttonStyle}
 					/> { /* Add */ }
 					<Modal show={this.state.showForm} onHide={this.handleClose} animation={false}>
 						<Modal.Header closeButton>
@@ -67,7 +67,8 @@ class FilterableDmpTable extends React.Component {
 }
 
 const buttonStyle = {
-  margin : '10px 10px 10px 10px'
+  margin : '10px 10px 10px 10px',
+	width: '100%'
 }
 
 export default FilterableDmpTable;
