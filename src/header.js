@@ -1,6 +1,7 @@
 import React from "react";
 //import { NavLink } from "react-router-dom";
 import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
 
 class Header extends React.Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class Header extends React.Component {
   render() {
 
     return (
-        <Navbar class="header">
+        <nav class="navbar navbar-light">
           <Navbar.Brand href="#home">
             <img
               alt="logo"
@@ -26,11 +27,11 @@ class Header extends React.Component {
               height="50px"
               className="d-inline-block align-top"
             />{' '}
-
           </Navbar.Brand>
           <span style={{textAlign:"center", fontSize:"2em"}}> DMPT - Data Management Plan Tool </span>
           <button className="btn btn-primary" onClick={this.logout}>Logout</button>
-        </Navbar>
+
+        </nav>
     )
   }
 
