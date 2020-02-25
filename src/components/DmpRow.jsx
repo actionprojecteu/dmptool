@@ -96,6 +96,7 @@ class DmpRow extends React.Component {
 
   handleClose(e){
     this.setState({showForm:false});
+    window.location.reload(true);
   }
 
   handleCloseDelete(e){
