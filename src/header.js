@@ -14,6 +14,7 @@ class Header extends React.Component {
   logout = () => {
       localStorage.clear();
       this.setState({ redirect: true });
+      window.location.reload(true);
   }
 
   render() {
