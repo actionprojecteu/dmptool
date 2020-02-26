@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFilePdf, faFileWord, faPencilAlt, faTools, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faFileWord, faPencilAlt, faTools, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import DmpFormContainer from '../containers/DmpFormContainer';
 import Modal from "react-bootstrap/Modal";
 import Button from './Button';
@@ -18,7 +18,6 @@ class DmpRow extends React.Component {
       message: '',
       showButtons: false,
       docx_file: '',
-      pdf_file: '',
       showDeleteDialog: false,
       dmp: props.dmp
     }
@@ -37,7 +36,7 @@ class DmpRow extends React.Component {
     this.handleDeleteNo = this.handleDeleteNo.bind(this);
 
     //this.timer = setInterval(()=> this.getLastTask(this.state.dmp['_id']), 1000);
-    this.timer = setTimeout(()=> this.getLastTask(this.state.dmp['_id']), 1000);
+    this.timer = setTimeout(()=> this.getLastTask(this.state.dmp['_id']), 2000);
 
   }
 
@@ -59,7 +58,7 @@ class DmpRow extends React.Component {
     					//this.setState({dmps:JSON.parse(JSON.stringify(data))})
     					//this.setState({showForm:true, dmp:data});
               if (data[0].status=="done"){
-                this.setState({"docx_file":"https://api.dmptool.actionproject.eu/resources/docx/"+data[0].url_docx,"pdf_file":"https://api.dmptool.actionproject.eu/resources/pdf/"+data[0].url_pdf});
+                this.setState({"docx_file":"https://api.dmptool.actionproject.eu/resources/docx/"+data[0].url_docx});
                 clearInterval(this.timer);
               }
           } else {
@@ -257,9 +256,6 @@ class DmpRow extends React.Component {
           </span>
           <span className="fa-layers fa-fw">
             <FontAwesomeIcon style={iconStyle} icon={faTrashAlt} onClick={this.handleDelete} onMouseOver={this.handleMouse} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}/>
-          </span>
-          <span className="fa-layers fa-fw" style={(this.state.pdf_file)? {iconStyle} : { iconStyle, display: 'none' }}>
-            <a href={this.state.pdf_file} download><FontAwesomeIcon  icon={faFilePdf} onMouseOver={this.onHover} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}/></a>
           </span>
           <span className="fa-layers fa-fw" style={(this.state.docx_file)? {iconStyle} : { iconStyle, display: 'none' }}>
             <a href={this.state.docx_file} download><FontAwesomeIcon icon={faFileWord} onMouseOver={this.onHover} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}/></a>
