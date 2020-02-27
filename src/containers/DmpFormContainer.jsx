@@ -145,7 +145,20 @@ class DmpFormContainer extends Component {
    this.handleDrag = this.handleDrag.bind(this);
    this.handleTagClick = this.handleTagClick.bind(this);
 
-   this.handleClose = this.handleClose.bind(this)
+   this.handleClose = this.handleClose.bind(this);
+
+   this.handleConey = this.handleConey.bind(this);
+
+
+  }
+
+  handleConey(e){
+    e.preventDefault();
+
+    //help_assistant_link = {'https://bit.ly/38E7q43'}
+
+    window.open('https://bit.ly/38E7q43', '_blank');
+
   }
 
   handleClose(e){
@@ -467,6 +480,8 @@ class DmpFormContainer extends Component {
                   value = {this.state.newDMP.license}
                   placeholder = {'Select your license'}
                   handleChange = {this.handleInput}
+                  help_assistant = {'yes'}
+                  action = {this.handleConey}
                 />
 
               <TextArea
