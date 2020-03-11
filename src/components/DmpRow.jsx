@@ -36,7 +36,7 @@ class DmpRow extends React.Component {
     this.handleDeleteNo = this.handleDeleteNo.bind(this);
 
     //this.timer = setInterval(()=> this.getLastTask(this.state.dmp['_id']), 1000);
-    this.timer = setTimeout(()=> this.getLastTask(this.state.dmp['_id']), 2000);
+    this.timer = setTimeout(()=> this.getLastTask(this.state.dmp['_id']), 3000);
 
   }
 
