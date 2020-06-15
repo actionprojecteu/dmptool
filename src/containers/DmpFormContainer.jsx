@@ -153,15 +153,22 @@ class DmpFormContainer extends Component {
 
    this.handleConey = this.handleConey.bind(this);
 
+   this.handleConeyQuality = this.handleConeyQuality.bind(this);
+
 
   }
 
   handleConey(e){
     e.preventDefault();
 
-    //help_assistant_link = {'https://bit.ly/38E7q43'}
-
     window.open('https://bit.ly/38E7q43', '_blank');
+
+  }
+
+  handleConeyQuality(e){
+    e.preventDefault();
+
+    window.open('https://survey.actionproject.eu/chat/?data=U2FsdGVkX1%20gNeYcV9QnePTySy2NGrBhpTQvz3zzINiOz3Lt47VdqTRv7qersLAc8cNzLBdfWersDkaQf3tcPg%3D%3D', '_blank');
 
   }
 
@@ -518,6 +525,8 @@ class DmpFormContainer extends Component {
                   options={this.state.yesandnoOptions}
                   selectedOptions = { this.state.newDMP.quality}
                   handleChange={this.handleCheckBox}
+                  action={this.handleConeyQuality}
+                  help_assistant = {'yes'}
               />
               <TextArea
                   title={'[9a] Please, describe it'}
