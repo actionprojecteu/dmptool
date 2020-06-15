@@ -22,7 +22,7 @@ class DmpTable extends React.Component {
         <thead class="table_head">
           <tr>
             <th style={{width:"70%", fontSize:"2em"}}>Name</th>
-            <th style={{"text-align":"center", fontSize:"2em"}}>Price</th>
+            <th style={{"text-align":"center", fontSize:"2em"}}>&nbsp;</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>
