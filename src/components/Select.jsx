@@ -7,7 +7,6 @@ const Select = (props) => {
 	//const help_button = (props.help_assitant== "yes") ? <button class="btn btn-primary">Help</button>;
 	var helpButton;
 	if (props.help_assistant== "yes") {
-		console.log("Paso1");
 	  helpButton = <button class="btn btn-primary" onClick= {props.action}>Help</button>;
 	}
 

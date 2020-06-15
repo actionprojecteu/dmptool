@@ -2,6 +2,11 @@ import React from 'react';
 
 
 const CheckBox = (props) => {
+	var helpButton;
+	if (props.help_assistant== "yes") {
+		helpButton = <button class="btn btn-primary" style={{marginLeft:'3em'}} onClick= {props.action}>Help</button>;
+	}
+
 	return( <div className="form-group">
     <label for={props.name} className="form-label" {...props}>{props.title}</label>
     <div className="checkbox">
@@ -19,6 +24,7 @@ const CheckBox = (props) => {
           </label>
         );
       })}
+			{helpButton}
     </div>
   </div>
 );
